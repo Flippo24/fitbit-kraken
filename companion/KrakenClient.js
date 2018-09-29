@@ -1,3 +1,5 @@
+console.log("API Client up");
+
 import { CryptoJS } from "./cryptoJS";
 
 // Public/Private method names
@@ -29,7 +31,7 @@ const getMessageSignature = (path, request, secret, nonce) => {
 // Send an API request
 const rawRequest = async (url, headers, data, timeout) => {
     // Set custom User-Agent string
-    headers['User-Agent'] = 'Fitbit';
+    headers['User-Agent'] = 'Kraken API Client for Fitbit';
     headers['Content-Type'] = 'application/json';
     headers['Accept'] = 'application/json';
 
@@ -40,7 +42,9 @@ const rawRequest = async (url, headers, data, timeout) => {
         body: JSON.stringify(data)
     });
 
+    console.log("making call");
     const body = await fetch(url, options);
+    console.log("call finished");
     const json = await body.text();
     const response = JSON.parse(json);
 

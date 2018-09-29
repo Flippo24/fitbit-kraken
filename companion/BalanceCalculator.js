@@ -1,11 +1,12 @@
+console.log("Balance Calculator up");
+
 import { KrakenClient } from './KrakenClient.js';
 import { settingsStorage } from 'settings';
-
-console.log("Balance Calculator up");
 
 export class BalanceCalculator {
     constructor(service, key) {
         this.currency = JSON.parse(settingsStorage.getItem('currency')).values[0].value || "ZEUR";
+        this.currency = "ZUSD";
 
         var key = JSON.parse(settingsStorage.getItem('apiKey')).name;
         var secret = JSON.parse(settingsStorage.getItem('apiSecret')).name;
@@ -49,16 +50,17 @@ export class BalanceCalculator {
     getBalances() {
         return this.api.privateMethod("Balance").then(data => {
             Object.keys(data.result).forEach(b => {
-                if (parseFloat(b) != 0) {
+                if (parseFloat(data.result[b]) != 0) {
                     var pair = b + this.currency.slice(-b.length);
                     this.data[b] = {
                         balance: parseFloat(data.result[b]),
                         pair: pair
                     }
-                }
+                    console.log(JSON.stringify(this.data[b]));
 
-                if (b !== this.currency) {
-                    this.pairlist.push(pair);
+                    if (b !== this.currency) {
+                        this.pairlist.push(pair);
+                    }
                 }
             })
         });
@@ -66,6 +68,7 @@ export class BalanceCalculator {
 
     getRates() {
         var payload = { pair: this.pairlist.join(",") };
+        console.log(JSON.stringify(payload));
         return this.api.publicMethod("Ticker", payload).then(data => {
             var prices = data.result;
             Object.keys(this.data).forEach(asset => {

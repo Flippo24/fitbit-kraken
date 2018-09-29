@@ -1,7 +1,7 @@
+console.log("Companion up");
+
 import { BalanceCalculator } from './BalanceCalculator.js';
 import * as messaging from 'messaging';
-
-console.log("Companion up");
 
 let calc = new BalanceCalculator("kraken");
 

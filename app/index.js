@@ -1,8 +1,8 @@
+console.log("Watch app up");
+
 import * as messaging from 'messaging';
 import document from 'document';
 import { MessageService } from './MessageService.js';
-
-console.log("Watch app up");
 
 let messageService = new MessageService();
 
