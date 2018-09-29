@@ -1,0 +1,18 @@
+.defaultText {
+  font-size: 32;
+  font-family: System-Regular;
+  font-weight: regular;
+  text-length: 32;
+}
+
+#output {
+  font-size: 32;
+  text-length: 50;
+  text-align: center;
+}
+
+#background {
+  width: 100%;
+  height: 100%;
+  fill: #1e86b8;
+}

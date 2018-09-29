@@ -1,0 +1,29 @@
+{
+  "name": "kraken",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@fitbit/sdk": "~1.0.2",
+    "@fitbit/sdk-cli": "^1.0.1"
+  },
+  "fitbit": {
+    "appUUID": "9686971d-4483-462a-80ba-dbb09db593d6",
+    "appType": "app",
+    "appDisplayName": "Kraken",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "#1e86b8",
+    "requestedPermissions": [
+      "access_internet"
+    ],
+    "buildTargets": [
+      "higgs"
+    ],
+    "i18n": {}
+  },
+  "scripts": {
+    "build": "fitbit-build",
+    "debug": "fitbit"
+  },
+  "dependencies": {}
+}
