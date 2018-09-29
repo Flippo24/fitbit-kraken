@@ -8,9 +8,10 @@ let messageService = new MessageService();
 
 
 messageService.setTarget(document.getElementById("output"));
-messageService.say("Hey phone")
+messageService.say("Hey phone");
 
 messaging.peerSocket.onopen = function () {
+    messageService.say("Hey phone");
     messageService.add("- Yes?")
     messageService.add("Can I get my Kraken balance?");
     sendCommand("balance");

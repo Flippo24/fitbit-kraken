@@ -17,7 +17,8 @@
       "access_internet"
     ],
     "buildTargets": [
-      "higgs"
+      "higgs",
+      "meson"
     ],
     "i18n": {}
   },
