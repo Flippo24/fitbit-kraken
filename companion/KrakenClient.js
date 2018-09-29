@@ -1,6 +1,10 @@
 console.log("API Client up");
 
 import { CryptoJS } from "./cryptoJS";
+// import sha256 from "crypto-js/sha256";
+// import HMAC from "crypto-js/hmac";
+// import sha512 from "crypto-js/sha512";
+// import Base64 from "crypto-js/enc-base64";
 
 // Public/Private method names
 const methods = {
@@ -20,12 +24,17 @@ const getMessageSignature = (path, request, secret, nonce) => {
     // API-Sign = Message signature using HMAC-SHA512 of (URI path + SHA256(nonce + POST data)) and base64 decoded secret API key
     // modified from Kraken-API code with love by Sander Van de Moortel
     const message = JSON.stringify(request);
+
     const hash = CryptoJS.SHA256(nonce + message);
+    // const hash = sha256(nonce + message);
     const secret_buffer = CryptoJS.enc.Base64.parse(secret);
+    // const secret_buffer = Base64.parse(secret);
     const hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA512, secret_buffer);
+    // cosnst hmac = HMAC.create(sha512, secret_buffer);
     hmac.update(path, secret_buffer);
     hmac.update(hash, secret_buffer);
     return hmac.finalize().toString(CryptoJS.enc.Base64);
+    // return hmac.finalize().toString(Base64);
 };
 
 // Send an API request
@@ -42,9 +51,7 @@ const rawRequest = async (url, headers, data, timeout) => {
         body: JSON.stringify(data)
     });
 
-    console.log("making call");
     const body = await fetch(url, options);
-    console.log("call finished");
     const json = await body.text();
     const response = JSON.parse(json);
 

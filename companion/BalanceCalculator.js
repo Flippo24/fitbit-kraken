@@ -4,12 +4,11 @@ import { KrakenClient } from './KrakenClient.js';
 import { settingsStorage } from 'settings';
 
 export class BalanceCalculator {
-    constructor(service, key) {
+    constructor(service) {
         this.currency = JSON.parse(settingsStorage.getItem('currency')).values[0].value || "ZEUR";
-        this.currency = "ZUSD";
 
-        var key = JSON.parse(settingsStorage.getItem('apiKey')).name;
-        var secret = JSON.parse(settingsStorage.getItem('apiSecret')).name;
+        this.key = JSON.parse(settingsStorage.getItem('apiKey')).name || "";
+        this.secret = JSON.parse(settingsStorage.getItem('apiSecret')).name || "";
 
         this.data = {};
         this.pairlist = [];
@@ -18,11 +17,15 @@ export class BalanceCalculator {
 
         switch (service) {
             case "kraken":
-                this.api = new KrakenClient(key, secret);
+                this.api = new KrakenClient(this.key, this.secret);
                 break;
             default:
                 throw new Error("Unknown service");
         }
+    }
+
+    isReady() {
+        return (this.secret.length > 0 && this.key.length > 0);
     }
 
     setCurrency(currency) {
@@ -56,7 +59,6 @@ export class BalanceCalculator {
                         balance: parseFloat(data.result[b]),
                         pair: pair
                     }
-                    console.log(JSON.stringify(this.data[b]));
 
                     if (b !== this.currency) {
                         this.pairlist.push(pair);
@@ -68,7 +70,6 @@ export class BalanceCalculator {
 
     getRates() {
         var payload = { pair: this.pairlist.join(",") };
-        console.log(JSON.stringify(payload));
         return this.api.publicMethod("Ticker", payload).then(data => {
             var prices = data.result;
             Object.keys(this.data).forEach(asset => {
@@ -86,7 +87,6 @@ export class BalanceCalculator {
         this.total = 0;
         Object.keys(this.data).forEach(asset => {
             var item = this.data[asset];
-
             var inHomeCurrency = item.balance * item.rate;
             item.total = inHomeCurrency;
             this.total += inHomeCurrency;

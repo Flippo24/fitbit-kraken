@@ -7,8 +7,9 @@
 
 #output {
   font-size: 32;
-  text-length: 50;
+  text-length: 100;
   text-align: center;
+  pointer-events: visible;
 }
 
 #background {

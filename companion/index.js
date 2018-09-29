@@ -6,9 +6,7 @@ import * as messaging from 'messaging';
 let calc = new BalanceCalculator("kraken");
 
 messaging.peerSocket.onopen = function () {
-    messaging.peerSocket.send({
-        command: "hi"
-    });
+
 }
 
 messaging.peerSocket.onmessage = function (event) {
@@ -25,10 +23,7 @@ function handleMessage(data) {
     if (data.command) {
         switch (data.command) {
             case "balance":
-                getBalance().then(balanceData => {
-                    console.log("Giving my device what it wants");
-                    sendData("balance", balanceData);
-                });
+                getBalance();
                 break;
             default:
                 console.log("Unknown command");
@@ -38,7 +33,17 @@ function handleMessage(data) {
 }
 
 function getBalance() {
-    return calc.getTotalBalance();
+    if (calc.isReady()) {
+        sendData("message", "Right away!");
+        calc.getTotalBalance().then(balanceData => {
+            sendData("balance", balanceData);
+        }).catch(err => {
+            console.log(err);
+            sendData("message", "I failed :(");
+        });
+    } else {
+        sendData("message", "Sure, but set your API credentials in the app first!")
+    }
 }
 
 function sendData(command, data = null) {

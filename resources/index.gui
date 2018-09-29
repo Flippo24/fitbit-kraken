@@ -1,4 +1,4 @@
 <svg>
   <rect id="background" />
-  <text id="output" x="5%" y="50%+15"></text>
+  <textarea id="output" x="5%" y="5%"></textarea>
 </svg>
