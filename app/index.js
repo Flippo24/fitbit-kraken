@@ -8,7 +8,7 @@ let messageService = new MessageService();
 
 
 messageService.setTarget(document.getElementById("output"));
-messageService.say("Hey phone.. again?")
+messageService.say("Hey phone")
 
 messaging.peerSocket.onopen = function () {
     messageService.add("- Yes?")
@@ -26,7 +26,7 @@ messaging.peerSocket.onerror = function (err) {
 
 function fetchAgain() {
     document.getElementById("output").onclick = null;
-    messageService.say("Hey phone")
+    messageService.say("Hey phone.. again?")
     sendCommand("balance");
 }
 
