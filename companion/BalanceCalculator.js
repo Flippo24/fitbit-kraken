@@ -1,31 +1,12 @@
 console.log("Balance Calculator up");
 
-import { KrakenClient } from './KrakenClient.js';
-import { settingsStorage } from 'settings';
-
 export class BalanceCalculator {
-    constructor(service) {
-        this.currency = JSON.parse(settingsStorage.getItem('currency')).values[0].value || "ZEUR";
-
-        this.key = JSON.parse(settingsStorage.getItem('apiKey')).name || "";
-        this.secret = JSON.parse(settingsStorage.getItem('apiSecret')).name || "";
-
+    constructor(client, currency) {
         this.data = {};
         this.pairlist = [];
         this.total = 0.0;
-        this.api = null;
-
-        switch (service) {
-            case "kraken":
-                this.api = new KrakenClient(this.key, this.secret);
-                break;
-            default:
-                throw new Error("Unknown service");
-        }
-    }
-
-    isReady() {
-        return (this.secret.length > 0 && this.key.length > 0);
+        this.client = client;
+        this.currency = currency;
     }
 
     setCurrency(currency) {
@@ -51,7 +32,7 @@ export class BalanceCalculator {
     }
 
     getBalances() {
-        return this.api.privateMethod("Balance").then(data => {
+        return this.client.api("Balance").then(data => {
             Object.keys(data.result).forEach(b => {
                 if (parseFloat(data.result[b]) != 0) {
                     var pair = b + this.currency.slice(-b.length);
@@ -70,7 +51,7 @@ export class BalanceCalculator {
 
     getRates() {
         var payload = { pair: this.pairlist.join(",") };
-        return this.api.publicMethod("Ticker", payload).then(data => {
+        return this.client.api("Ticker", payload).then(data => {
             var prices = data.result;
             Object.keys(this.data).forEach(asset => {
                 var item = this.data[asset];
