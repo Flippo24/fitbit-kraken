@@ -10,13 +10,19 @@ let currency = "ZEUR";
 let key = "";
 let secret = "";
 
+let balanceQueue = 0;
+let messageQueue = [];
 
 messaging.peerSocket.onopen = function () {
 }
 
 messaging.peerSocket.onmessage = function (event) {
     if (event.data) {
-        handleMessage(event.data);
+        if (messageQueue.length > 0) {
+            handleMessage()
+        } else {
+            messageQueue.push(event.data);
+        }
     }
 }
 
@@ -24,11 +30,15 @@ messaging.peerSocket.onerror = function (err) {
     console.log("Error: " + err.code + " - " + err.message);
 }
 
-function handleMessage(data) {
+function handleMessage() {
+    var data = messageQueue[messageQueue.length - 1];
+    console.log("Handling message");
     if (data.command) {
         switch (data.command) {
             case "balance":
-                getBalance();
+                if (balanceQueue === 0) {
+                    getBalance();
+                }
                 break;
             default:
                 console.log("Unknown command");
@@ -38,6 +48,8 @@ function handleMessage(data) {
 }
 
 function getBalance() {
+    balanceQueue += 1;
+    console.log("Getting balance");
     if (getSettings()) {
         sendData("message", "Right away!");
         let krakenClient = new KrakenClient(key, secret);
@@ -47,8 +59,9 @@ function getBalance() {
             sendData("balance", balanceData);
         }).catch(err => {
             console.log("Error: " + err);
-            sendData("message", "I failed :(");
+            sendData("error", "I failed :( " + err);
         });
+        balanceQueue -= 1;
     } else {
         sendData("message", "Sure, but set your API credentials in the app first!")
     }
@@ -61,6 +74,7 @@ function sendData(command, data = null) {
             payload: data
         });
     }
+    messageQueue.pop();
 }
 
 function getSettings() {

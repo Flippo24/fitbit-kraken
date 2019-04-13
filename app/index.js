@@ -6,12 +6,10 @@ import { MessageService } from './MessageService.js';
 
 let messageService = new MessageService();
 
-
 messageService.setTarget(document.getElementById("output"));
 messageService.say("Hey phone");
 
 messaging.peerSocket.onopen = function () {
-    messageService.say("Hey phone");
     messageService.add("- Yes?")
     messageService.add("Can I get my Kraken balance?");
     sendCommand("balance");
@@ -52,10 +50,14 @@ function handleMessage(data) {
             case "balance":
                 messageService.add("- " + data.payload.balance + " " + data.payload.currency);
                 document.getElementById("output").onclick = (_) => fetchAgain();
-                // messaging.peerSocket.close();
+                break;
+            case "error":
+                messageService.add("- " + data.payload);
+                document.getElementById("output").onclick = (_) => fetchAgain();
                 break;
             default:
                 messageService.add("I don't know what that means buddy.");
         }
     }
+
 }
